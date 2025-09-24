@@ -4,7 +4,7 @@ const ctx = overlay.getContext("2d");
 const status = document.getElementById("status");
 
 async function start() {
-  // face-api.js のモデルをCDNから読み込み
+  // モデル読み込み
   await faceapi.nets.tinyFaceDetector.loadFromUri(
     "https://justadudewhohacks.github.io/face-api.js/models"
   );
@@ -12,14 +12,15 @@ async function start() {
     "https://justadudewhohacks.github.io/face-api.js/models"
   );
 
-  // カメラを起動
-  navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-    video.srcObject = stream;
-  });
+  // カメラ起動
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  video.srcObject = stream;
 }
 
+// 👇 start を関数定義のあとで呼び出す
+start();
+
 video.addEventListener("play", () => {
-  // 実際のカメラ映像サイズに合わせる
   overlay.width = video.videoWidth;
   overlay.height = video.videoHeight;
 
@@ -27,7 +28,6 @@ video.addEventListener("play", () => {
     const displaySize = { width: video.videoWidth, height: video.videoHeight };
     faceapi.matchDimensions(overlay, displaySize);
 
-    // 顔検出
     const detections = await faceapi
       .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
