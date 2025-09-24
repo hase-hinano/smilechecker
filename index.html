@@ -2,28 +2,60 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>カメラテスト</title>
+  <title>スマイルチェッカー</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #fff8dc; /* 薄い黄色 */
+      background-image: radial-gradient(white 40px, transparent 40px);
+      background-size: 40px 40px;
+    }
+    h1 {
+      font-size: 32px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    #wrapper {
+      position: relative;
+      display: inline-block; /* 中央寄せ */
+    }
+    video, canvas {
+      width: 640px;
+      height: 480px;
+      border-radius: 10px;
+    }
+    video {
+      border: 2px solid #333;
+      transform: scaleX(-1); /* ミラー表示 */
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #status {
+      font-size: 28px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <video id="video" autoplay muted playsinline width="640" height="480"></video>
+  <h1>スマイルチェッカー</h1>
+  <div id="wrapper">
+    <video id="video" autoplay muted></video>
+    <canvas id="overlay"></canvas>
+  </div>
+  <div id="status">カメラを起動中...</div>
 
-  <script>
-    const video = document.getElementById("video");
-
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-      } catch (err) {
-        console.error("カメラ起動失敗:", err);
-      }
-    }
-
-    startCamera();
-  </script>
+  <!-- face-api.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <!-- 自作スクリプト -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
-
 
 
 
