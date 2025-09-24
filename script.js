@@ -19,11 +19,12 @@ async function start() {
 }
 
 video.addEventListener("play", () => {
-  overlay.width = video.width;
-  overlay.height = video.height;
+  // 実際のカメラ映像サイズに合わせる
+  overlay.width = video.videoWidth;
+  overlay.height = video.videoHeight;
 
   setInterval(async () => {
-    const displaySize = { width: video.width, height: video.height };
+    const displaySize = { width: video.videoWidth, height: video.videoHeight };
     faceapi.matchDimensions(overlay, displaySize);
 
     // 顔検出
@@ -31,13 +32,10 @@ video.addEventListener("play", () => {
       .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
 
-    // 検出結果をキャンバスサイズに合わせる
     const resized = faceapi.resizeResults(detections, displaySize);
 
-    // 描画のたびにクリア
     ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-    // 左右反転して描画
     ctx.save();
     ctx.scale(-1, 1);
     ctx.translate(-overlay.width, 0);
@@ -47,10 +45,9 @@ video.addEventListener("play", () => {
 
     ctx.restore();
 
-    // ステータス更新（笑顔検出）
     if (resized.length > 0 && resized[0].expressions) {
       if (resized[0].expressions.happy > 0.7) {
-        status.innerText = "いい笑顔！いってらっしゃい😊 ";
+        status.innerText = "いい笑顔！いってらっしゃい😊";
       } else {
         status.innerText = "笑顔が足りない😢";
       }
@@ -59,5 +56,3 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
-
-start();
