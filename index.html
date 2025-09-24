@@ -8,30 +8,10 @@ body {
   text-align: center;
   font-family: sans-serif;
   margin: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: #fff9c4; /* 薄めの黄色 */
-  position: relative;
-  overflow: hidden;
-  z-index: 0; /* 本体を上に */
+  background-color: #fff8dc; /* 薄めの黄色 */
+  background-image: radial-gradient(white 1.5px, transparent 1.5px);
+  background-size: 40px 40px; /* 星っぽい小さい点を散らす */
 }
-
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(white 40px, transparent 40px);
-  background-size: 40px 40px; /* 星の間隔 */
-  z-index: -1; /* 背景に配置 */
-}
-
-
 
     h1 {
   font-size: 32px;     /* 文字を大きくする */
@@ -84,3 +64,4 @@ body::before {
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
