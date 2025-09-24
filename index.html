@@ -2,55 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>スマイルチェッカー</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #fff8dc;
-    }
-    #wrapper {
-      position: relative;
-      display: inline-block;
-      margin-top: 20px;
-    }
-    video, canvas {
-      width: 640px;
-      height: 480px;
-      border-radius: 10px;
-    }
-    video {
-      border: 2px solid #333;
-      transform: scaleX(-1); /* ミラー表示 */
-    }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    #status {
-      font-size: 24px;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  </style>
+  <title>カメラテスト</title>
 </head>
 <body>
-  <h1>スマイルチェッカー</h1>
-  <div id="wrapper">
-    <video id="video" autoplay muted playsinline></video>
-    <canvas id="overlay"></canvas>
-  </div>
-  <div id="status">カメラを起動中...</div>
+  <video id="video" autoplay muted playsinline width="640" height="480"></video>
 
-  <!-- face-api.js を先に読み込む -->
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-  <!-- 自作スクリプト -->
-  <script type="module" src="script.js"></script>
   <script>
-  start();
-</script>
+    const video = document.getElementById("video");
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("カメラ起動失敗:", err);
+      }
+    }
+
+    startCamera();
+  </script>
 </body>
 </html>
 
