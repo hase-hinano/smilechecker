@@ -61,7 +61,7 @@ video.addEventListener("play", () => {
 
   if (isSmiling) {
     smileDuration += 0.2; // 200msごとに0.2秒
-    if (smileDuration >= 4 && !smiling) {
+    if (smileDuration >= 3 && !smiling) {
       smileCount++;
       smiling = true; 
       smileCounter.innerText = `笑顔回数: ${smileCount}`;
@@ -76,7 +76,7 @@ video.addEventListener("play", () => {
 
   // 📌 ステータス更新
   if (isSmiling) {
-    if (smileDuration < 4) {
+    if (smileDuration < 3) {
       status.innerText = "笑顔認証中…";  // まだゲージ途中
     } else {
       status.innerText = "いい笑顔！いってらっしゃい😊"; // ゲージ満タン
@@ -93,6 +93,7 @@ video.addEventListener("play", () => {
 }
   }, 200);
 });
+
 
 
 
