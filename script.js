@@ -64,7 +64,7 @@ video.addEventListener("play", () => {
     if (smileDuration >= 3 && !smiling) {
       smileCount++;
       smiling = true; 
-      smileCounter.innerText = `笑顔回数: ${smileCount}`;
+      smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
     }
   } else {
     smileDuration = 0;
@@ -93,6 +93,7 @@ video.addEventListener("play", () => {
 }
   }, 200);
 });
+
 
 
 
