@@ -47,6 +47,12 @@
     height: 25px;   /* 高さを大きく */
     margin-top: 20px;
   }
+    #smileCounter {
+  font-size: 25px;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
   </style>
 </head>
 <body>
@@ -54,18 +60,20 @@
   <div id="wrapper">
     <video id="video" autoplay muted></video>
     <canvas id="overlay"></canvas>
-    <div id="smileCounter">今日の笑顔人数: 0</div>
 <progress id="smileGauge" value="0" max="3"></progress>
 
   </div>
   <div id="status">カメラを起動中...</div>
-
+  
+<div id="smileCounter">今日の笑顔人数: 0</div>
+  
   <!-- face-api.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <!-- 自作スクリプト -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
