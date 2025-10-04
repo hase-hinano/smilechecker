@@ -10,9 +10,13 @@ let smileCount = 0;
 let smileDuration = 0; // 笑顔が続いた時間
 let smiling = false;   // すでにカウント中かどうか
 
-// ---- 日ごとのログ管理 ----
+// ---- 日ごとのログ管理（日本時間対応） ----
 function getToday() {
-  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function getLogs() {
@@ -51,7 +55,6 @@ function downloadCSV() {
 }
 
 // ---- CSVボタンイベントリスナー ----
-// ボタンはHTMLの最後に置くことが前提
 const downloadBtn = document.getElementById("downloadBtn");
 if (downloadBtn) {
   downloadBtn.addEventListener("click", downloadCSV);
