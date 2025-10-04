@@ -51,6 +51,14 @@ function downloadCSV() {
   a.click();
 }
 
+// ---- CSVボタンイベントリスナーを安全に登録 ----
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("downloadBtn");
+  if (btn) {
+    btn.addEventListener("click", downloadCSV);
+  }
+});
+
 // ---- 顔認識スタート ----
 async function start() {
   await faceapi.nets.tinyFaceDetector.loadFromUri(
@@ -133,6 +141,3 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
-
-// ---- CSVボタンイベントリスナー ----
-document.getElementById("downloadBtn").addEventListener("click", downloadCSV);
