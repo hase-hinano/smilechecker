@@ -104,7 +104,7 @@ video.addEventListener("play", () => {
           smileCount++;
           smiling = true; 
           smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
-          incrementToday(); // ← ログ保存！
+          incrementToday(); // ← ログ保存
         }
       } else {
         smileDuration = 0;
@@ -133,3 +133,6 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
+// ---- CSVボタンイベントリスナー ----
+document.getElementById("downloadBtn").addEventListener("click", downloadCSV);
