@@ -15,35 +15,34 @@ function getToday() {
   return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
-// ログを取得
 function getLogs() {
   return JSON.parse(localStorage.getItem("smileLogs") || "{}");
 }
 
-// ログを保存
 function saveLogs(logs) {
   localStorage.setItem("smileLogs", JSON.stringify(logs));
 }
 
-// 当日の合計を更新
 function incrementToday() {
   const today = getToday();
-  let logs = getLogs();
+  const logs = getLogs();
   logs[today] = (logs[today] || 0) + 1;
   saveLogs(logs);
 }
 
-// CSVダウンロード
+// ---- CSVダウンロード ----
 function downloadCSV() {
   const logs = getLogs();
   if (Object.keys(logs).length === 0) {
     alert("まだログがありません");
     return;
   }
+
   let csv = "date,total_count\n";
   for (let date in logs) {
     csv += `${date},${logs[date]}\n`;
   }
+
   const blob = new Blob([csv], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -51,13 +50,14 @@ function downloadCSV() {
   a.click();
 }
 
-// ---- CSVボタンイベントリスナーを安全に登録 ----
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("downloadBtn");
-  if (btn) {
-    btn.addEventListener("click", downloadCSV);
-  }
-});
+// ---- CSVボタンイベントリスナー ----
+// ボタンはHTMLの最後に置くことが前提
+const downloadBtn = document.getElementById("downloadBtn");
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", downloadCSV);
+} else {
+  console.error("downloadBtnが見つかりません");
+}
 
 // ---- 顔認識スタート ----
 async function start() {
@@ -107,22 +107,20 @@ video.addEventListener("play", () => {
       const isSmiling = mainFace.expressions.happy > 0.7;
 
       if (isSmiling) {
-        smileDuration += 0.2; // 200msごとに0.2秒
+        smileDuration += 0.2;
         if (smileDuration >= 3 && !smiling) {
           smileCount++;
-          smiling = true; 
+          smiling = true;
           smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
-          incrementToday(); // ← ログ保存
+          incrementToday();
         }
       } else {
         smileDuration = 0;
         smiling = false;
       }
 
-      // ゲージ更新
       smileGauge.value = smileDuration;
 
-      // ステータス更新
       if (isSmiling) {
         if (smileDuration < 3) {
           status.innerText = "笑顔認証中…";
@@ -132,7 +130,6 @@ video.addEventListener("play", () => {
       } else {
         status.innerText = "笑顔が足りない😢";
       }
-
     } else {
       smileDuration = 0;
       smiling = false;
