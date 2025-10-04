@@ -52,7 +52,24 @@
   margin-top: 16px;
   font-weight: bold;
 }
+    #downloadBtn {
+  position: fixed;       /* 画面に固定 */
+  bottom: 20px;          /* 下から20px */
+  right: 20px;           /* 右から20px */
+  padding: 10px 18px;    /* ボタンの大きさ */
+  font-size: 16px;
+  border-radius: 8px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  z-index: 1000;         /* 他の要素より前に表示 */
+}
 
+#downloadBtn:hover {
+  background-color: #45a049; /* ホバー色 */
+}
   </style>
 </head>
 <body>
@@ -74,4 +91,5 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
