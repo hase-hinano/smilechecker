@@ -12,13 +12,16 @@ let smiling = false;
 
 // --- 日本時間で今日の日付を取得（安全版） ---
 function getToday() {
-  // 日本時間での現在時刻の文字列を取得
-  const jstString = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-  const jst = new Date(jstString);
+  const now = new Date();
+  // JSTの年、月、日を直接取得
+  const jstYear  = now.getFullYear();
+  const jstMonth = now.getMonth() + 1; // 0始まりなので+1
+  const jstDate  = now.getDate();
 
-  const y = jst.getFullYear();
-  const m = String(jst.getMonth() + 1).padStart(2, "0");
-  const d = String(jst.getDate()).padStart(2, "0");
+  // 常にYYYY-MM-DD形式に整形
+  const y = jstYear;
+  const m = String(jstMonth).padStart(2, "0");
+  const d = String(jstDate).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 
@@ -114,4 +117,5 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
