@@ -10,9 +10,6 @@ let smileCount = 0;
 let smileDuration = 0;
 let smiling = false;
 
-// Google Apps Script Web AppのURLをここに貼る
-const SHEET_URL = "＜https://script.google.com/macros/s/AKfycbxcBh5lCQDpm_jIkm-uBxijth1FtiD3pdqDH5LzNp33pTBgsk2enX46EyxdDpsrtKw5/exec＞";
-
 // ---- 日ごとのログ管理 ----
 function getToday() {
   const now = new Date();
@@ -36,19 +33,6 @@ function incrementToday() {
   const logs = getLogs();
   logs[today] = (logs[today] || 0) + 1;
   saveLogs(logs);
-  sendToSheet(today, logs[today]);
-}
-
-// ---- Googleスプレッドシートに送信 ----
-function sendToSheet(date, total_count) {
-  fetch(SHEET_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ date, total_count })
-  })
-    .then((r) => r.text())
-    .then((res) => console.log("送信成功:", res))
-    .catch((err) => console.error("送信エラー:", err));
 }
 
 // ---- CSVダウンロード ----
@@ -142,5 +126,3 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
-
-
