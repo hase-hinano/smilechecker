@@ -157,7 +157,7 @@ video.addEventListener("play", () => {
       status.innerText =
         isSmiling
           ? smileDuration < 3
-            ? "笑顔認証中…"
+            ? "笑顔パワーチャージ中…"
             : "いい笑顔！いってらっしゃい😊"
           : "笑顔が足りない😢";
     } else {
@@ -168,3 +168,4 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
