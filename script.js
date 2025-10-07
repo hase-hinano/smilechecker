@@ -11,7 +11,7 @@ let smileDuration = 0;
 let smiling = false;
 
 // Google Apps Script Web AppのURLをここに貼る
-const SHEET_URL = "＜https://script.google.com/home/?hl=ja&pli=1＞";
+const SHEET_URL = "＜https://script.google.com/macros/s/AKfycbxcBh5lCQDpm_jIkm-uBxijth1FtiD3pdqDH5LzNp33pTBgsk2enX46EyxdDpsrtKw5/exec＞";
 
 // ---- 日ごとのログ管理 ----
 function getToday() {
@@ -142,3 +142,4 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
