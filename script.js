@@ -5,10 +5,28 @@ const status = document.getElementById("status");
 const smileCounter = document.getElementById("smileCounter");
 const smileGauge = document.getElementById("smileGauge");
 
-// グローバル変数
+// ---- Firebase 初期化 ----
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+// 🔹ここを書き換える（Firebaseの設定情報に）🔹
+const firebaseConfig = {
+  apiKey: "あなたのAPIキー",
+  authDomain: "あなたのプロジェクトID.firebaseapp.com",
+  databaseURL: "https://あなたのプロジェクトID.firebaseio.com",
+  projectId: "あなたのプロジェクトID",
+  storageBucket: "あなたのプロジェクトID.appspot.com",
+  messagingSenderId: "送信者ID",
+  appId: "アプリID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ---- グローバル変数 ----
 let smileCount = 0;
-let smileDuration = 0; // 笑顔が続いた時間
-let smiling = false;   // すでにカウント中かどうか
+let smileDuration = 0;
+let smiling = false;
 
 // ---- 日ごとのログ管理（日本時間対応） ----
 function getToday() {
@@ -27,11 +45,26 @@ function saveLogs(logs) {
   localStorage.setItem("smileLogs", JSON.stringify(logs));
 }
 
-function incrementToday() {
+// ---- ローカル＋Firebase両方に記録 ----
+async function incrementToday() {
   const today = getToday();
+
+  // 🔸ローカル保存
   const logs = getLogs();
   logs[today] = (logs[today] || 0) + 1;
   saveLogs(logs);
+
+  // 🔸Firebase保存（全タブレット共有）
+  const dbRef = ref(db, `smileLogs/${today}`);
+  const snapshot = await get(dbRef);
+
+  let total = 1;
+  if (snapshot.exists()) {
+    total = snapshot.val().count + 1;
+  }
+
+  await set(dbRef, { count: total });
+  console.log(`Firebase保存完了: ${today} → ${total}`);
 }
 
 // ---- CSVダウンロード ----
@@ -54,7 +87,7 @@ function downloadCSV() {
   a.click();
 }
 
-// ---- CSVボタンイベントリスナー ----
+// ---- ボタンイベント ----
 const downloadBtn = document.getElementById("downloadBtn");
 if (downloadBtn) {
   downloadBtn.addEventListener("click", downloadCSV);
@@ -77,6 +110,7 @@ async function start() {
 
 start();
 
+// ---- 笑顔検出ループ ----
 video.addEventListener("play", () => {
   overlay.width = video.videoWidth;
   overlay.height = video.videoHeight;
@@ -92,14 +126,11 @@ video.addEventListener("play", () => {
     const resized = faceapi.resizeResults(detections, displaySize);
 
     ctx.clearRect(0, 0, overlay.width, overlay.height);
-
     ctx.save();
     ctx.scale(-1, 1);
     ctx.translate(-overlay.width, 0);
-
     faceapi.draw.drawDetections(overlay, resized);
     faceapi.draw.drawFaceExpressions(overlay, resized);
-
     ctx.restore();
 
     if (resized.length > 0) {
@@ -115,7 +146,7 @@ video.addEventListener("play", () => {
           smileCount++;
           smiling = true;
           smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
-          incrementToday();
+          incrementToday(); // ← Firebase + ローカル 両方更新
         }
       } else {
         smileDuration = 0;
@@ -123,16 +154,12 @@ video.addEventListener("play", () => {
       }
 
       smileGauge.value = smileDuration;
-
-      if (isSmiling) {
-        if (smileDuration < 3) {
-          status.innerText = "笑顔認証中…";
-        } else {
-          status.innerText = "いい笑顔！いってらっしゃい😊";
-        }
-      } else {
-        status.innerText = "笑顔が足りない😢";
-      }
+      status.innerText =
+        isSmiling
+          ? smileDuration < 3
+            ? "笑顔認証中…"
+            : "いい笑顔！いってらっしゃい😊"
+          : "笑顔が足りない😢";
     } else {
       smileDuration = 0;
       smiling = false;
