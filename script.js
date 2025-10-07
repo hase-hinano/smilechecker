@@ -10,24 +10,23 @@ let smileCount = 0;
 let smileDuration = 0;
 let smiling = false;
 
-// ---- 日ごとのログ管理 ----
+// --- 日本時間で今日の日付を取得 ---
 function getToday() {
   const now = new Date();
-  now.setHours(now.getHours() + 9); // JST補正
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
+  const jst = new Date(now.getTime() + 9*60*60*1000); // JST補正
+  const y = jst.getFullYear();
+  const m = String(jst.getMonth() + 1).padStart(2,"0");
+  const d = String(jst.getDate()).padStart(2,"0");
   return `${y}-${m}-${d}`;
 }
 
+// --- ログ管理 ---
 function getLogs() {
   return JSON.parse(localStorage.getItem("smileLogs") || "{}");
 }
-
 function saveLogs(logs) {
   localStorage.setItem("smileLogs", JSON.stringify(logs));
 }
-
 function incrementToday() {
   const today = getToday();
   const logs = getLogs();
@@ -35,20 +34,15 @@ function incrementToday() {
   saveLogs(logs);
 }
 
-// ---- CSVダウンロード ----
+// --- CSVダウンロード ---
 function downloadCSV() {
   const logs = getLogs();
-  if (Object.keys(logs).length === 0) {
-    alert("まだログがありません");
-    return;
-  }
+  if(Object.keys(logs).length === 0) { alert("まだログがありません"); return; }
 
   let csv = "date,total_count\n";
-  for (let date in logs) {
-    csv += `${date},${logs[date]}\n`;
-  }
+  for(let date in logs) csv += `${date},${logs[date]}\n`;
 
-  const blob = new Blob([csv], { type: "text/csv" });
+  const blob = new Blob([csv], {type: "text/csv"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "smile_logs.csv";
@@ -56,19 +50,14 @@ function downloadCSV() {
 }
 downloadBtn.addEventListener("click", downloadCSV);
 
-// ---- 顔認識スタート ----
+// --- 顔認識 ---
 async function start() {
-  await faceapi.nets.tinyFaceDetector.loadFromUri(
-    "https://justadudewhohacks.github.io/face-api.js/models"
-  );
-  await faceapi.nets.faceExpressionNet.loadFromUri(
-    "https://justadudewhohacks.github.io/face-api.js/models"
-  );
+  await faceapi.nets.tinyFaceDetector.loadFromUri("https://justadudewhohacks.github.io/face-api.js/models");
+  await faceapi.nets.faceExpressionNet.loadFromUri("https://justadudewhohacks.github.io/face-api.js/models");
 
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const stream = await navigator.mediaDevices.getUserMedia({video:true});
   video.srcObject = stream;
 }
-
 start();
 
 video.addEventListener("play", () => {
@@ -79,50 +68,43 @@ video.addEventListener("play", () => {
     const displaySize = { width: video.videoWidth, height: video.videoHeight };
     faceapi.matchDimensions(overlay, displaySize);
 
-    const detections = await faceapi
-      .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-      .withFaceExpressions();
-
+    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                                   .withFaceExpressions();
     const resized = faceapi.resizeResults(detections, displaySize);
 
-    ctx.clearRect(0, 0, overlay.width, overlay.height);
+    ctx.clearRect(0,0,overlay.width,overlay.height);
     ctx.save();
-    ctx.scale(-1, 1);
-    ctx.translate(-overlay.width, 0);
-    faceapi.draw.drawDetections(overlay, resized);
-    faceapi.draw.drawFaceExpressions(overlay, resized);
+    ctx.scale(-1,1);
+    ctx.translate(-overlay.width,0);
+    faceapi.draw.drawDetections(overlay,resized);
+    faceapi.draw.drawFaceExpressions(overlay,resized);
     ctx.restore();
 
-    if (resized.length > 0) {
-      const mainFace = resized.reduce((a, b) =>
-        a.detection.box.area > b.detection.box.area ? a : b
-      );
-      const isSmiling = mainFace.expressions.happy > 0.7;
+    if(resized.length>0){
+      const mainFace = resized.reduce((a,b)=>a.detection.box.area>b.detection.box.area?a:b);
+      const isSmiling = mainFace.expressions.happy>0.7;
 
-      if (isSmiling) {
+      if(isSmiling){
         smileDuration += 0.2;
-        if (smileDuration >= 3 && !smiling) {
+        if(smileDuration >= 3 && !smiling){
           smileCount++;
           smiling = true;
           smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
           incrementToday();
         }
-      } else {
+      }else{
         smileDuration = 0;
         smiling = false;
       }
 
       smileGauge.value = smileDuration;
-      status.innerText = isSmiling
-        ? smileDuration < 3
-          ? "笑顔認証中…"
-          : "いい笑顔！いってらっしゃい😊"
-        : "笑顔が足りない😢";
-    } else {
+      status.innerText = isSmiling ? (smileDuration<3 ? "笑顔認証中…" : "いい笑顔！いってらっしゃい😊") : "笑顔が足りない😢";
+    }else{
       smileDuration = 0;
       smiling = false;
       smileGauge.value = 0;
       status.innerText = "カメラを起動中...";
     }
-  }, 200);
+
+  },200);
 });
