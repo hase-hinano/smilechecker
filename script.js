@@ -94,7 +94,7 @@ video.addEventListener("play", () => {
 
       if (isSmiling) {
         smileDuration += 0.2;
-        if (smileDuration >= 2 && !smiling) {
+        if (smileDuration >= 1.5 && !smiling) {
           smileCount++;
           smiling = true;
           smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
@@ -107,7 +107,7 @@ video.addEventListener("play", () => {
 
       smileGauge.value = smileDuration;
       status.innerText = isSmiling
-        ? (smileDuration < 2 ? "笑顔認証中…" : "いい笑顔！いってらっしゃい😊")
+        ? (smileDuration < 1.5 ? "笑顔認証中…" : "いい笑顔！いってらっしゃい😊")
         : "笑顔が足りない😢";
     } else {
       smileDuration = 0;
@@ -117,6 +117,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
