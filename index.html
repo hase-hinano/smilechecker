@@ -26,8 +26,11 @@
       border-radius: 10px;
     }
 video {
-  display: none; /* 映像を非表示にする */
+  opacity: 0; /* 透明にして見えなくする */
+  position: absolute;
+  pointer-events: none; /* クリックなど無効化 */
 }
+
 
 canvas {
   display: none;
@@ -86,6 +89,7 @@ canvas {
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
