@@ -121,7 +121,7 @@ video.addEventListener("play", () => {
         smileDuration = 0;
         smiling = false;
         smileGauge.value = 0;
-        status.innerText = "笑顔が足りない";
+        status.innerText = "いちたすいちは??";
         emojiDisplay.innerText = "😢";
         emojiDisplay.style.opacity = 1;
         setTimeout(() => (emojiDisplay.style.opacity = 0), 800);
@@ -130,10 +130,11 @@ video.addEventListener("play", () => {
       smileDuration = 0;
       smiling = false;
       smileGauge.value = 0;
-      status.innerText = "カメラを起動中...";
+      status.innerText = "笑顔募集中❣";
       emojiDisplay.style.opacity = 0;
     }
   }, 200);
 });
+
 
 
