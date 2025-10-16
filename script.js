@@ -4,8 +4,9 @@ const ctx = overlay.getContext("2d");
 const status = document.getElementById("status");
 const smileCounter = document.getElementById("smileCounter");
 const smileGauge = document.getElementById("smileGauge");
-const downloadBtn = document.getElementById("downloadBtn");
 const emojiDisplay = document.getElementById("emojiDisplay"); // ← 絵文字表示用
+const downloadBtn = document.getElementById("downloadBtn");
+
 
 let smileCount = 0;
 let smileDuration = 0;
@@ -136,3 +137,4 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
