@@ -40,16 +40,15 @@
   }
 
   /* ステータス文字 */
-  #status {
-    position: relative;
-    font-size: 36px;
-    margin-top: 600px; /* 絵文字の下に配置 */
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.8);
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 12px;
-  }
+ #status {
+  display: flex;
+  flex-direction: column; /* ← 縦並びにする */
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+  margin-top: 20px;
+}
 
   #smileGauge {
     width: 600px;
@@ -83,16 +82,12 @@
   }
 
   /* 絵文字を中央に大きく配置 */
-  #emojiDisplay {
-    position: absolute;
-    top: 40%; /* 中央よりやや上に配置して #status とかぶらない */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 120px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-  }
+ #emojiDisplay {
+  font-size: 80px;      /* 絵文字サイズを少し小さく */
+  margin-bottom: 10px;  /* テキストとの間に余白 */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
 </style>
 
 </head>
@@ -117,6 +112,7 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
