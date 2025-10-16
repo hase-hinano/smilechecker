@@ -35,6 +35,8 @@ video {
 canvas {
   display: none;
 }
+    <div id="emojiDisplay">😊</div>
+
     #status {
       font-size: 40px;
       margin-top: 20px;
@@ -67,6 +69,18 @@ canvas {
     #downloadBtn:hover {
       background-color: #45a049;
     }
+
+    #emojiDisplay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;       /* 絵文字の大きさ */
+  opacity: 0;             /* 最初は非表示 */
+  transition: opacity 0.5s ease; /* ふわっと表示 */
+  pointer-events: none;   /* マウス操作の邪魔をしない */
+}
+
   </style>
 </head>
 <body>
@@ -89,6 +103,7 @@ canvas {
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
