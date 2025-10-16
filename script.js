@@ -112,7 +112,7 @@ video.addEventListener("play", () => {
         smileGauge.value = Math.min(smileDuration, 2);
         status.innerText =
           smileDuration < 2
-            ? "笑顔認証中…"
+            ? "笑顔パワーチャージ中"
             : "いい笑顔！いってらっしゃい";
         emojiDisplay.innerText =
           smileDuration < 2 ? "😊" : "😄";
@@ -135,4 +135,5 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
