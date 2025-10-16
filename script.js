@@ -5,24 +5,19 @@ const status = document.getElementById("status");
 const smileCounter = document.getElementById("smileCounter");
 const smileGauge = document.getElementById("smileGauge");
 const downloadBtn = document.getElementById("downloadBtn");
+const emojiDisplay = document.getElementById("emojiDisplay"); // ← 絵文字表示用
 
 let smileCount = 0;
 let smileDuration = 0;
 let smiling = false;
 
-// --- 日本時間で今日の日付を取得（安全版） ---
+// --- 日本時間で今日の日付を取得 ---
 function getToday() {
   const now = new Date();
-  // JSTの年、月、日を直接取得
-  const jstYear  = now.getFullYear();
-  const jstMonth = now.getMonth() + 1; // 0始まりなので+1
-  const jstDate  = now.getDate();
-
-  // 常にYYYY-MM-DD形式に整形
-  const y = jstYear;
-  const m = String(jstMonth).padStart(2, "0");
-  const d = String(jstDate).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  const jstYear = now.getFullYear();
+  const jstMonth = now.getMonth() + 1;
+  const jstDate = now.getDate();
+  return `${jstYear}-${String(jstMonth).padStart(2, "0")}-${String(jstDate).padStart(2, "0")}`;
 }
 
 // --- ログ管理 ---
@@ -35,7 +30,8 @@ function saveLogs(logs) {
 function incrementToday() {
   const today = getToday();
   const logs = getLogs();
-  logs[today] = (logs[today] || 0) + 1;
+  if (!logs[today]) logs[today] = [];
+  logs[today].push(new Date().toLocaleTimeString("ja-JP"));
   saveLogs(logs);
 }
 
@@ -47,8 +43,12 @@ function downloadCSV() {
     return;
   }
 
-  let csv = "date,total_count\n";
-  for (let date in logs) csv += `${date},${logs[date]}\n`;
+  let csv = "date,time\n";
+  for (let date in logs) {
+    logs[date].forEach((time) => {
+      csv += `${date},${time}\n`;
+    });
+  }
 
   const blob = new Blob([csv], { type: "text/csv" });
   const a = document.createElement("a");
@@ -60,8 +60,12 @@ downloadBtn.addEventListener("click", downloadCSV);
 
 // --- 顔認識 ---
 async function start() {
-  await faceapi.nets.tinyFaceDetector.loadFromUri("https://justadudewhohacks.github.io/face-api.js/models");
-  await faceapi.nets.faceExpressionNet.loadFromUri("https://justadudewhohacks.github.io/face-api.js/models");
+  await faceapi.nets.tinyFaceDetector.loadFromUri(
+    "https://justadudewhohacks.github.io/face-api.js/models"
+  );
+  await faceapi.nets.faceExpressionNet.loadFromUri(
+    "https://justadudewhohacks.github.io/face-api.js/models"
+  );
 
   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
   video.srcObject = stream;
@@ -76,8 +80,10 @@ video.addEventListener("play", () => {
     const displaySize = { width: video.videoWidth, height: video.videoHeight };
     faceapi.matchDimensions(overlay, displaySize);
 
-    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+    const detections = await faceapi
+      .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
+
     const resized = faceapi.resizeResults(detections, displaySize);
 
     ctx.clearRect(0, 0, overlay.width, overlay.height);
@@ -89,36 +95,44 @@ video.addEventListener("play", () => {
     ctx.restore();
 
     if (resized.length > 0) {
-      const mainFace = resized.reduce((a, b) => a.detection.box.area > b.detection.box.area ? a : b);
+      const mainFace = resized.reduce((a, b) =>
+        a.detection.box.area > b.detection.box.area ? a : b
+      );
       const isSmiling = mainFace.expressions.happy > 0.5;
 
       if (isSmiling) {
         smileDuration += 0.2;
-        if (smileDuration >= 2 && !smiling) {
-          smileCount++;
-          smiling = true;
-          smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
-          incrementToday();
+        smileGauge.value = smileDuration;
+
+        if (smileDuration < 2) {
+          status.innerText = "笑顔認証中…";
+          emojiDisplay.innerText = "😊";
+        } else {
+          if (!smiling) {
+            smileCount++;
+            smiling = true;
+            smileCounter.innerText = `今日の笑顔人数: ${smileCount}`;
+            incrementToday();
+          }
+          status.innerText = "いい笑顔！いってらっしゃい😊";
+          emojiDisplay.innerText = "😄";
         }
+
+        emojiDisplay.style.opacity = 1;
       } else {
         smileDuration = 0;
+        smileGauge.value = 0;
         smiling = false;
+        status.innerText = "笑顔が足りない😢";
+        emojiDisplay.innerText = "😢";
+        emojiDisplay.style.opacity = 1;
       }
-
-      smileGauge.value = smileDuration;
-      status.innerText = isSmiling
-        ? (smileDuration < 2 ? "笑顔認証中…" : "いい笑顔！いってらっしゃい😊")
-        : "笑顔が足りない😢";
     } else {
       smileDuration = 0;
       smiling = false;
       smileGauge.value = 0;
       status.innerText = "カメラを起動中...";
+      emojiDisplay.style.opacity = 0;
     }
   }, 200);
 });
-
-
-
-
-
