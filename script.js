@@ -86,13 +86,16 @@ function downloadCSV() {
 }
 
 // ===== ボタンイベント =====
-const downloadBtn = document.getElementById("downloadBtn");
-if (downloadBtn) {
+if (typeof downloadBtn !== "undefined" && downloadBtn !== null) {
   downloadBtn.addEventListener("click", downloadCSV);
 } else {
-  console.warn("⚠️ downloadBtn が見つかりません。HTMLを確認してください。");
+  const btn = document.getElementById("downloadBtn");
+  if (btn) {
+    btn.addEventListener("click", downloadCSV);
+  } else {
+    console.warn("⚠️ downloadBtn が見つかりません。HTMLを確認してください。");
+  }
 }
-
 
 // ===== モデル読み込み & カメラ起動 =====
 async function start() {
@@ -167,6 +170,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
