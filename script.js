@@ -22,7 +22,15 @@ function getToday() {
 
 // ===== ログ管理 =====
 function getLogs() {
-  return JSON.parse(localStorage.getItem("smileLogs") || "{}");
+  try {
+    const data = localStorage.getItem("smileLogs");
+    const parsed = JSON.parse(data);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (e) {
+    console.warn("ログデータ破損のため初期化します");
+    localStorage.removeItem("smileLogs");
+    return {};
+  }
 }
 
 function saveLogs(logs) {
@@ -32,35 +40,59 @@ function saveLogs(logs) {
 function addSmileLog() {
   const today = getToday();
   const logs = getLogs();
-  if (!logs[today]) logs[today] = [];
+
+  // 日付キーが存在しない、または配列でない場合は初期化
+  if (!Array.isArray(logs[today])) {
+    logs[today] = [];
+  }
+
   const now = new Date().toLocaleTimeString("ja-JP", { hour12: false });
   logs[today].push(now);
   saveLogs(logs);
+
+  console.log(`✅ 笑顔ログ追加: ${today} ${now}`);
 }
 
 // ===== CSVダウンロード =====
 function downloadCSV() {
   const logs = getLogs();
-  if (Object.keys(logs).length === 0) {
+  const dates = Object.keys(logs);
+
+  if (dates.length === 0) {
     alert("まだログがありません");
     return;
   }
 
-  let csv = "date,time\n";
-  for (let date in logs) {
-    logs[date].forEach(time => {
-      csv += `${date},${time}\n`;
-    });
-  }
+  let csv = "日付,時刻\n";
 
-  const blob = new Blob([csv], { type: "text/csv" });
+  dates.forEach(date => {
+    const times = logs[date];
+    if (Array.isArray(times)) {
+      times.forEach(time => {
+        csv += `${date},${time}\n`;
+      });
+    }
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  a.href = url;
   a.download = "smile_logs.csv";
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
-downloadBtn.addEventListener("click", downloadCSV);
+// ===== ボタンイベント =====
+const downloadBtn = document.getElementById("downloadBtn");
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", downloadCSV);
+} else {
+  console.warn("⚠️ downloadBtn が見つかりません。HTMLを確認してください。");
+}
+
 
 // ===== モデル読み込み & カメラ起動 =====
 async function start() {
@@ -135,6 +167,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
