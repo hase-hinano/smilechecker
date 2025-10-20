@@ -39,21 +39,26 @@ function saveLogs(logs) {
 
 function addSmileLog() {
   const today = getToday();
-  const logs = getLogs();
+  let logs = getLogs();
 
-  // 日付キーが存在しない、または配列でない場合は初期化
+  // 他の端末の書き込み競合対策：最新の localStorage を毎回読み直す
+  logs = getLogs();
+
   if (!Array.isArray(logs[today])) {
     logs[today] = [];
   }
 
   const now = new Date().toLocaleTimeString("ja-JP", { hour12: false });
   logs[today].push(now);
-  saveLogs(logs);
 
-  console.log(`✅ 笑顔ログ追加: ${today} ${now}`);
+  try {
+    saveLogs(logs);
+    console.log(`✅ 笑顔ログ追加: ${today} ${now}`);
+  } catch (e) {
+    console.error("⚠️ ログ保存エラー:", e);
+  }
 }
 
-// ===== CSVダウンロード =====
 function downloadCSV() {
   const logs = getLogs();
   const dates = Object.keys(logs);
@@ -66,24 +71,23 @@ function downloadCSV() {
   let csv = "日付,時刻\n";
 
   dates.forEach(date => {
-    const times = logs[date];
-    if (Array.isArray(times)) {
-      times.forEach(time => {
-        csv += `${date},${time}\n`;
-      });
-    }
+    const times = Array.isArray(logs[date]) ? logs[date] : [];
+    times.forEach(time => {
+      csv += `${date},${time}\n`;
+    });
   });
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "smile_logs.csv";
+  a.download = `smile_logs_${getToday()}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
 
 // ===== ボタンイベント =====
 if (typeof downloadBtn !== "undefined" && downloadBtn !== null) {
@@ -170,6 +174,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
