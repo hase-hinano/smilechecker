@@ -71,29 +71,47 @@ function addSmileLog() {
   }
 }
 
-// ===== CSVダウンロード（1日ごとの笑顔回数） =====
+// ===== CSVダウンロード（全情報を1つに統合） =====
 function downloadCSV() {
-  const logs = getLogs();
-  const dates = Object.keys(logs);
-  if (dates.length === 0) {
-    alert("まだログがありません");
+  const logs = getLogs();              // 日ごとの累計
+  const eventLogs = getEventLogs();    // 各イベント詳細
+
+  if (!eventLogs.length) {
+    alert("まだ笑顔のログがありません");
     return;
   }
-  let csv = "日付,笑顔回数\n";
-  dates.forEach(date => {
-    const count = typeof logs[date] === "number" ? logs[date] : 0;
-    csv += `${date},${count}\n`;
+
+  // CSVヘッダー
+  let csv = "日付,時刻,その日までの笑顔回数,笑顔になるまでの時間(秒),笑顔到達までの時間(秒)\n";
+
+  // イベントデータを日付・時刻順に並べ替え
+  eventLogs.sort((a, b) => {
+    if (a.date === b.date) return a.time.localeCompare(b.time);
+    return a.date.localeCompare(b.date);
   });
+
+  // 各イベントをCSVに追記
+  for (const ev of eventLogs) {
+    const date = ev.date;
+    const time = ev.time;
+    const count = ev.count ?? (logs[date] || 0);
+    const latencySmileComplete = ev.latency_smileComplete ?? "";
+    const latencySmileReach = ev.latency_smileReach ?? "";
+    csv += `${date},${time},${count},${latencySmileComplete},${latencySmileReach}\n`;
+  }
+
+  // CSVファイル生成・ダウンロード
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `smile_logs_${getToday()}.csv`;
+  a.download = `smile_all_logs_${getToday()}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
 if (downloadBtn) downloadBtn.addEventListener("click", downloadCSV);
 
 // ===== モデル読み込み & カメラ起動 =====
@@ -218,3 +236,4 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
