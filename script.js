@@ -7,11 +7,11 @@ const smileGauge = document.getElementById("smileGauge");
 const downloadBtn = document.getElementById("downloadBtn");
 const emojiDisplay = document.getElementById("emojiDisplay");
 
-const HAPPY_TH = 0.5;   // トリガー：これを超えたら2秒計測を開始
+const HAPPY_TH = 0.7;   // トリガー：これを超えたら2秒計測を開始
 const HOLD_SEC = 2.0;   // 維持時間：2秒
 const START_TH = 0.10;  // 笑顔作り始め判定
 const RESET_TH = 0.05;  // 作り直し判定
-const KEEP_TH = 0.3;    // 維持閾値（これ未満になるとリセット）
+const KEEP_TH = 0.1;    // 維持閾値（これ未満になるとリセット）
 
 let smileStart = false;     // 笑顔作り開始
 let smileCompleted_tm = 0;  // 0.2秒刻みで積算
@@ -236,6 +236,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
