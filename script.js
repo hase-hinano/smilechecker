@@ -163,7 +163,7 @@ video.addEventListener("play", () => {
           smileCompleted_tm = 0;
           smileReach = false;
           smile_tm = 0;
-          smiling = false; // ←再スタートを許可
+          //smiling = false; // ←再スタートを許可
         }
       }
 
@@ -204,7 +204,7 @@ video.addEventListener("play", () => {
       } else if (happyScore < KEEP_TH) {
         smileHold = false;
         smileDuration = 0;
-        smiling = false;
+        //smiling = false;
       }
 
       // ===== 表示制御 =====
@@ -236,6 +236,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
