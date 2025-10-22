@@ -210,14 +210,14 @@ video.addEventListener("play", () => {
       // ===== 表示制御 =====
       smileGauge.value = Math.min(smileDuration, HOLD_SEC);
       if (smiling) {
-        status.innerText = "いい笑顔！いってらっしゃい🌸スタンプの場所は〇〇！";
+        status.innerHTML = "いい笑顔！いってらっしゃい🌸<br>スタンプの場所は〇〇！";
         emojiDisplay.innerText = "😄";
       } else if (smileHold) {
         status.innerText = "笑顔パワーチャージ中...";
         emojiDisplay.innerText = "😊";
       } else {
         status.innerText = "いちたすいちは??";
-        emojiDisplay.innerText = "😢";
+        emojiDisplay.innerText = "😏";
       }
       emojiDisplay.style.opacity = 1;
 
@@ -236,6 +236,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
