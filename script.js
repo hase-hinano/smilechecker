@@ -7,7 +7,7 @@ const smileGauge = document.getElementById("smileGauge");
 const downloadBtn = document.getElementById("downloadBtn");
 const emojiDisplay = document.getElementById("emojiDisplay");
 
-const HAPPY_TH = 0.7;   // トリガー：これを超えたら2秒計測を開始
+const HAPPY_TH = 0.75;   // トリガー：これを超えたら2秒計測を開始
 const HOLD_SEC = 2.0;   // 維持時間：2秒
 const START_TH = 0.10;  // 笑顔作り始め判定
 const RESET_TH = 0.05;  // 作り直し判定
@@ -236,6 +236,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
