@@ -210,7 +210,7 @@ video.addEventListener("play", () => {
       // ===== 表示制御 =====
       smileGauge.value = Math.min(smileDuration, HOLD_SEC);
       if (smiling) {
-        status.innerHTML = "いい笑顔！いってらっしゃい🌸<br>スタンプの場所は「食堂掲示板下」！";
+        status.innerHTML = "いい笑顔！いってらっしゃい🌸<br>スタンプの場所は「給茶機近く」！";
         emojiDisplay.innerText = "😄";
       } else if (smileHold) {
         status.innerText = "笑顔パワーチャージ中...";
@@ -236,6 +236,7 @@ video.addEventListener("play", () => {
     }
   }, 200);
 });
+
 
 
 
